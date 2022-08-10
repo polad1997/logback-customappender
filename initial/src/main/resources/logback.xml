@@ -10,10 +10,6 @@
         </encoder>
     </appender>
 
-    <logger name="com.example.springboot.service">
-        <appender-ref ref="filter" />
-    </logger>
-
     <root level="info">
         <appender-ref ref="filter"/>
         <appender-ref ref="out"/>

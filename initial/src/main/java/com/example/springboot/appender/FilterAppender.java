@@ -3,6 +3,7 @@ package com.example.springboot.appender;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,13 +21,7 @@ public class FilterAppender extends AppenderBase<ILoggingEvent> {
 
     @Override
     protected void append(ILoggingEvent eventObject) {
-        if (prefix == null || "".equals(prefix)) {
-            addError("Prefix is not set for FilterAppender.");
-            return;
-        }
-//        eventMap.put(prefix + System.currentTimeMillis(), eventObject);
-        System.out.println("eventObject.getLoggerName ::::::::::: " + eventObject.getLoggerName());
-        eventList.add(eventObject);
+        if (isLoggerUnderSpecificPackage(eventObject)) eventList.add(eventObject);
     }
 
     public Map<String, ILoggingEvent> getEventMap() {
@@ -43,6 +38,13 @@ public class FilterAppender extends AppenderBase<ILoggingEvent> {
 
     public void setPrefix(String prefix) {
         this.prefix = prefix;
+    }
+
+    private boolean isLoggerUnderSpecificPackage(ILoggingEvent eventObject) {
+        if (!ObjectUtils.isEmpty(eventObject)) {
+            return eventObject.getLoggerName().startsWith("com.example.springboot.service");
+        }
+        return false;
     }
 
 }
