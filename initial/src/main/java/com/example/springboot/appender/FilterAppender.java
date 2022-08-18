@@ -1,35 +1,39 @@
 package com.example.springboot.appender;
 
+import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ObjectUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
+import static java.lang.Thread.currentThread;
 
 @Configuration
 public class FilterAppender extends AppenderBase<ILoggingEvent> {
 
     private String prefix;
-    private ConcurrentMap<String, ILoggingEvent> eventMap = new ConcurrentHashMap<>();
-    private List<ILoggingEvent> eventList = Collections.synchronizedList(new ArrayList<>());
+    private final Map<String, List<ILoggingEvent>> eventMap = new HashMap<>();
 
     @Override
     protected void append(ILoggingEvent eventObject) {
-        if (isLoggerUnderSpecificPackage(eventObject)) eventList.add(eventObject);
+        if (isLoggerUnderSpecificPackage(eventObject)) {
+            if (!eventMap.containsKey(currentThread().getName())) {
+                List<ILoggingEvent> eventListByThreadName = new ArrayList<>();
+                eventListByThreadName.add(eventObject);
+                eventMap.put(currentThread().getName(), eventListByThreadName);
+            } else {
+                eventMap.get(currentThread().getName()).add(eventObject);
+            }
+        }
     }
 
-    public Map<String, ILoggingEvent> getEventMap() {
+    public Map<String, List<ILoggingEvent>> getEventMap() {
         return eventMap;
-    }
-
-    public List<ILoggingEvent> getEventList() {
-        return eventList;
     }
 
     public String getPrefix() {

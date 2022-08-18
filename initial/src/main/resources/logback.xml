@@ -5,8 +5,17 @@
     </appender>
 
     <appender name="out" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <includeMdcKeyName>TraceId</includeMdcKeyName>
+            <includeMdcKeyName>ParentSpanId</includeMdcKeyName>
+            <includeMdcKeyName>SpanId</includeMdcKeyName>
+            <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+                <maxDepthPerThrowable>30</maxDepthPerThrowable>
+                <inlineHash>true</inlineHash>
+                <maxLength>2048</maxLength>
+                <exclusions>${STE_EXCLUSIONS}</exclusions>
+                <rootCauseFirst>true</rootCauseFirst>
+            </throwableConverter>
         </encoder>
     </appender>
 

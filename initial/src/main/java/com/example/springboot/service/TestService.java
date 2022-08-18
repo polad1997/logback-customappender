@@ -1,9 +1,12 @@
 package com.example.springboot.service;
 
 import ch.qos.logback.classic.Logger;
+import com.example.springboot.HelloController;
 import com.example.springboot.appender.FilterAppender;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import static java.lang.Thread.currentThread;
 
 @Component
 public class TestService {
@@ -11,9 +14,14 @@ public class TestService {
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(TestService.class);
 
     public void write() {
-        LOGGER.info("Example logging 1 : {} ", TestService.class);
-        LOGGER.info("Example logging 2 : {} ", TestService.class);
-        LOGGER.info("Example logging 3 : {} ", TestService.class);
+
+//        new Thread(() -> {
+//            sleep(time);
+//        }).start();
+
+        LOGGER.info("Example logging 1 : {} ::::::::::: current Thread: {}  ", TestService.class, currentThread().getName());
+        LOGGER.info("Example logging 2 : {} ::::::::::: current Thread: {}  ", TestService.class, currentThread().getName());
+        LOGGER.info("Example logging 3 : {} ::::::::::: current Thread: {}  ", TestService.class, currentThread().getName());
 
 //        LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
 //
@@ -23,12 +31,6 @@ public class TestService {
 //                System.out.println("appender ::: " + appender.getName());
 //            }
 //        }
-
-
-        Logger logger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-        FilterAppender appender = (FilterAppender) logger.getAppender("filter");
-        System.out.println("eventList:::::::::" + appender.getEventList()   );
     }
-
 
 }
